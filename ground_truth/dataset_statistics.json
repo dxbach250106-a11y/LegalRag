@@ -1,0 +1,25 @@
+{
+  "total_queries": 6000,
+  "train_queries": 4000,
+  "test_queries": 2000,
+  "unique_documents": 6000,
+  "unique_relevant_chunks": 13163,
+  "train_test_document_overlap": 0,
+  "missing_relevant_chunk_ids": 0,
+  "k_values": [
+    5,
+    10,
+    50,
+    100,
+    200
+  ],
+  "num_relevant_chunks_distribution": {
+    "2": 4837,
+    "3": 1163
+  },
+  "source_parquet": "legal_chunks(2).parquet",
+  "source_parquet_rows": 137877,
+  "generation_method": "One multi-chunk query per unique legal document; train/test split by document.",
+  "random_seed": 42,
+  "note": "Synthetic template-generated ground truth from actual chunks. Manual legal review is recommended before final reporting."
+}

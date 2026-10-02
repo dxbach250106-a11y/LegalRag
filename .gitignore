@@ -13,12 +13,11 @@ embedding_output/
 evaluation_output/
 faiss_output/
 graph/
-ground_truth/
 hf_cache/
 lib/
 
 # models
-models/
+/models/
 
 # vector database
 vector_store/

@@ -1,0 +1,135 @@
+{
+  "project": {
+    "name": "LegalRAG",
+    "seed": 42,
+    "log_level": "INFO"
+  },
+
+  "chunking": {
+    "target_legal_sector": "Giáo dục",
+    "min_chunk_chars": 50,
+    "print_all_chunks": false
+  },
+
+  "paths": {
+    "legal_chunks": "data/legal_chunks.parquet",
+    "embedding_dir": "embedding_output",
+    "embeddings": "embedding_output/embeddings.npy",
+    "embedding_metadata": "embedding_output/embedding_metadata.parquet",
+    "faiss_index": "faiss_output/legal_chunks.faiss",
+    "bm25_dir": "bm25_output",
+    "bm25_lookup": "bm25_output/bm25_lookup.parquet",
+    "graph_dir": "graph",
+    "graph_nodes": "graph/nodes.parquet",
+    "graph_edges": "graph/edges.parquet",
+    "queries": "ground_truth/all_queries.jsonl",
+    "evaluation_dir": "evaluation_output"
+  },
+
+  "embedding": {
+    "model_name": "Qwen/Qwen3-Embedding-0.6B",
+    "local_model_dir": "models/embedding_model",
+    "text_column": "content",
+    "id_column": "id",
+    "text_mode": "content",
+    "batch_size": 32,
+    "read_batch_size": 128,
+    "max_length": 512,
+    "embedding_dim": 1024,
+    "query_prompt_name": "query",
+    "normalize": true,
+    "device": "auto",
+    "dtype": "float16",
+    "local_files_only": false,
+    "overwrite": false
+  },
+
+  "bm25": {
+    "text_column": "content",
+    "id_column": "id",
+    "language": "vi"
+  },
+  "faiss": {
+    "metric": "ip",
+    "use_gpu": false
+  },
+  "retrieval": {
+    "faiss_top_k": 250,
+    "bm25_top_k": 250,
+    "final_top_k": 200,
+    "rrf_k": 60,
+    "semantic_weight": 1.0,
+    "lexical_weight": 1.0
+  },
+  "graph": {
+    "direction": "both",
+    "max_hops": 2,
+    "hop_decay": 0.65,
+    "retrieval_weight": 0.8,
+    "graph_weight": 0.2,
+    "edge_type_key": "edge_type",
+    "edge_weight_key": "reference_count",
+    "source_column": "source",
+    "target_column": "target",
+    "include_non_article_chunks": true,
+    "edge_weights": {
+      "contains": 1.0,
+      "contains_appendix": 0.6,
+      "contains_table": 0.5,
+      "links_to": 1.0
+    }
+  },
+  "generation": {
+    "enabled": false,
+    "model_name": "Qwen/Qwen3-0.6B",
+    "local_model_dir": "models/llm_models/Qwen3",
+    "max_new_tokens": 512,
+    "temperature": 0.1,
+    "device": "auto"
+  },
+  
+  "evaluation": {
+    "random_seed": 42,
+    "shuffle": true,
+    "query_count": 4000,
+    "candidate_k": 250,
+    "ks": [5,10,50,100,200],
+    "log_every": 25,
+    "hyperparameter_grid": {
+      "hybrid": {
+        "semantic_weight": [0.5, 1.0, 1.5],
+        "lexical_weight": [0.5, 1.0, 1.5],
+        "rrf_k": [30, 60, 90]
+      },
+      "graph": {
+        "max_hops": [1, 2],
+        "hop_decay": [0.5, 0.65, 0.8]
+      },
+      "hybrid_graph": {
+        "graph_weight": [0.1, 0.2, 0.3],
+        "max_hops": [1, 2],
+        "hop_decay": [0.5, 0.65, 0.8]
+      }
+    }
+  },
+  "pipeline": {
+    "mode": "experiment",
+    "source_mode": "existing",
+    "rebuild_before_evaluation": false,
+    "query": "Quy định pháp luật liên quan là gì?",
+    "build_steps": [
+      "download_models",
+      "embed",
+      "faiss",
+      "bm25",
+      "graph"
+    ]
+  },
+
+  "dataset": {
+    "name": "minhdoan17/vietnamese-legal-documents",
+    "content_config": "content",
+    "metadata_config": "metadata",
+    "cache_dir": "hf_cache/datasets/minhdoan17__vietnamese-legal-documents"
+  }
+}

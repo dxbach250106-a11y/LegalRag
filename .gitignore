@@ -1,0 +1,32 @@
+# python cache
+__pycache__/
+*.pyc
+
+# virtual environment
+.conda/
+.hf_cache/
+.vscode/
+
+#input and output
+bm25_output/
+embedding_output/
+evaluation_output/
+faiss_output/
+graph/
+ground_truth/
+hf_cache/
+lib/
+
+# models
+models/
+
+# vector database
+vector_store/
+
+# data
+data/
+
+# jupyter
+*.ipynb
+
+tests/
